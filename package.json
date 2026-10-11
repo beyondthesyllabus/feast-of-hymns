@@ -1,0 +1,11 @@
+{
+  "name": "feast-of-hymns-attending",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Feast of Hymns 2026 - I Will Be Attending landing page (static, built with tools/build.py)",
+  "scripts": {
+    "dev": "node tools/serve.js",
+    "start": "node tools/serve.js",
+    "build": "python tools/build.py"
+  }
+}
