@@ -16,11 +16,11 @@ FONTS = os.path.join(HERE, 'fonts')
 W, H = 1080, 1350
 
 # ---- new photo slot geometry ----
-WW, WH = 500, 440            # white photo slot size (was 350x350)
+WW, WH = 500, 430            # white photo slot size (was 350x350)
 FX = (W - WW) // 2           # slot left  -> WX in app.jsx
 FY = 566                     # slot top   -> WY in app.jsx (outer frame top = FY-34 = 532)
 BAND_TOP = 532               # first row we repaint (outer frame top edge)
-BAND_BOT = 1212              # top of the details bar (kept untouched below this)
+BAND_BOT = H                 # repaint everything below the header, redraw details bar lower
 
 FP = {
     'Bold': os.path.join(FONTS, 'Poppins-Bold.ttf'),
@@ -134,11 +134,11 @@ img.alpha_composite(rib)
 d = ImageDraw.Draw(img)
 ctext(by + 12, "I WILL BE", f(40), (255, 255, 255), 9, False)
 
-# ---- ATTENDING (gold gradient text, slightly smaller to fit the bigger photo) ----
-ay = by + 42
-fa = f(112)
+# ---- ATTENDING (gold gradient text, stands alone with clear space above the bar) ----
+ay = by + 40
+fa = f(104)
 w = d.textlength("ATTENDING", font=fa)
-while w > 860:
+while w > 820:
     fa = ImageFont.truetype(FP['Bold'], fa.size - 4)
     w = d.textlength("ATTENDING", font=fa)
 tm = Image.new('L', (W, H), 0)
@@ -156,7 +156,26 @@ img.alpha_composite(shadow, (4, 8))
 gold.putalpha(tm)
 img.alpha_composite(gold)
 
-out = Image.open(os.path.join(GEN, 'tpl_v2.png')) if False else img.convert('RGB')
+# ---- details bar (moved down so ATTENDING stands alone with clear space) ----
+d = ImageDraw.Draw(img)
+bh = 104; byb = H - bh - 20; bx0, bx1 = 40, W - 40
+bar = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+bd = ImageDraw.Draw(bar)
+bd.rounded_rectangle((bx0, byb, bx1, byb + bh), 14, fill=(5, 22, 95, 240), outline=(255, 200, 40, 255), width=3)
+for xx in (bx0 + 290, bx1 - 290):
+    bd.line((xx, byb + 16, xx, byb + bh - 16), fill=(255, 200, 40, 200), width=2)
+img.alpha_composite(bar)
+d = ImageDraw.Draw(img)
+def cell(cx, label, lines, sz=20):
+    lw = d.textlength(label, font=f(22)); d.text((cx - lw / 2, byb + 12), label, font=f(22), fill=(255, 205, 50))
+    yy = byb + 44
+    for l in lines:
+        w_ = d.textlength(l, font=f(sz, 'Bold')); d.text((cx - w_ / 2, yy), l, font=f(sz, 'Bold'), fill=(255, 255, 255)); yy += sz + 6
+cell((bx0 + bx0 + 290) / 2, "Date:", ["Sun. 25th Oct. 2026"], 18)
+cell((bx0 + 290 + bx1 - 290) / 2, "Venue:", ["God's House of Refuge", "8 Ikot Ebido Street, Uyo"], 19)
+cell((bx1 - 290 + bx1) / 2, "Time:", ["5:00pm prompt", "Red Carpet II: 4:30pm"], 18)
+
+out = img.convert('RGB')
 out.save(os.path.join(GEN, 'tpl_v2.png'))
 out.save(os.path.join(GEN, 'tpl_v2.jpg'), quality=88)
 print('saved tools/_gen/tpl_v2.png / tpl_v2.jpg')

@@ -1,5 +1,5 @@
 const { useState, useEffect, useRef, useCallback } = React;
-const A = window.A, WX = 290, WY = 566, WW = 500, WH = 440;
+const A = window.A, WX = 290, WY = 566, WW = 500, WH = 430;
 const fit = i => Math.max(WW / i.width, WH / i.height);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
