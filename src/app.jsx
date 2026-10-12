@@ -1,6 +1,6 @@
 const { useState, useEffect, useRef, useCallback } = React;
-const A = window.A, WX = 365, WY = 573, WS = 350;
-const fit = i => Math.max(WS / i.width, WS / i.height);
+const A = window.A, WX = 290, WY = 566, WW = 500, WH = 440;
+const fit = i => Math.max(WW / i.width, WH / i.height);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 // Floating ambient music particles for sacred hymn atmosphere
@@ -351,7 +351,8 @@ function Creator() {
 
   useEffect(() => {
     off.current = document.createElement("canvas");
-    off.current.width = off.current.height = WS;
+    off.current.width = WW;
+    off.current.height = WH;
     const img = new Image();
     img.onload = () => {
       tpl.current = img;
@@ -371,19 +372,19 @@ function Creator() {
     x.clearRect(0, 0, 1080, 1350);
     x.drawImage(t, 0, 0, 1080, 1350);
     oc.fillStyle = "#fff";
-    oc.fillRect(0, 0, WS, WS);
+    oc.fillRect(0, 0, WW, WH);
 
     if (s.img) {
       const k = fit(s.img) * s.z;
       oc.save();
-      oc.translate(WS / 2 + s.x, WS / 2 + s.y);
+      oc.translate(WW / 2 + s.x, WH / 2 + s.y);
       oc.rotate((s.rot * Math.PI) / 180);
       oc.scale(s.flip * k, k);
       oc.drawImage(s.img, -s.img.width / 2, -s.img.height / 2);
       oc.restore();
 
       if (s.b || s.c || s.s) {
-        const d = oc.getImageData(0, 0, WS, WS);
+        const d = oc.getImageData(0, 0, WW, WH);
         const a = d.data;
         const br = s.b * 2.55;
         const q = s.c * 2.55;
@@ -406,43 +407,43 @@ function Creator() {
 
     if (!s.img) {
       x.fillStyle = "#eaf0ff";
-      x.fillRect(WX, WY, WS, WS);
+      x.fillRect(WX, WY, WW, WH);
       x.strokeStyle = "#0a34af";
       x.lineWidth = 3;
       x.setLineDash([12, 10]);
-      x.strokeRect(WX + 16, WY + 16, WS - 32, WS - 32);
+      x.strokeRect(WX + 16, WY + 16, WW - 32, WH - 32);
       x.setLineDash([]);
       x.textAlign = "center";
       x.fillStyle = "#0a34af";
-      x.font = "700 22px Poppins";
-      x.fillText("Upload your photo", WX + WS / 2, WY + WS / 2 - 4);
-      x.font = "500 15px Poppins";
+      x.font = "700 26px Poppins";
+      x.fillText("Upload your photo", WX + WW / 2, WY + WH / 2 - 4);
+      x.font = "500 17px Poppins";
       x.fillStyle = "#4a62b8";
-      x.fillText("Tap here to choose", WX + WS / 2, WY + WS / 2 + 24);
+      x.fillText("Tap here to choose", WX + WW / 2, WY + WH / 2 + 28);
     }
 
     // Name banner on flyer
     const n = s.name.trim().toUpperCase() || "YOUR NAME";
-    const h = 56;
-    const y = WY + WS - h;
+    const h = 60;
+    const y = WY + WH - h;
     const g = x.createLinearGradient(0, y, 0, y + h);
     g.addColorStop(0, "rgba(8,30,120,.94)");
     g.addColorStop(1, "rgba(3,15,69,.97)");
     x.fillStyle = g;
-    x.fillRect(WX, y, WS, h);
+    x.fillRect(WX, y, WW, h);
     x.fillStyle = "#ffc828";
-    x.fillRect(WX, y, WS, 4);
+    x.fillRect(WX, y, WW, 4);
 
-    let f = 26;
+    let f = 30;
     x.textAlign = "center";
     x.textBaseline = "middle";
     do {
       x.font = `700 ${f}px Poppins`;
       f--;
-    } while (x.measureText(n).width > WS - 28 && f > 11);
+    } while (x.measureText(n).width > WW - 32 && f > 12);
 
     x.fillStyle = s.name.trim() ? "#fff" : "#8fa4e6";
-    x.fillText(n, WX + WS / 2, y + h / 2 + 3);
+    x.fillText(n, WX + WW / 2, y + h / 2 + 3);
     x.textBaseline = "alphabetic";
   }, [s, ready]);
 
@@ -452,7 +453,7 @@ function Creator() {
     const q = k();
     const x = (e.clientX - r.left) * q;
     const y = (e.clientY - r.top) * q;
-    return x >= WX && x <= WX + WS && y >= WY && y <= WY + WS;
+    return x >= WX && x <= WX + WW && y >= WY && y <= WY + WH;
   };
 
   const handleImageFile = file => {
